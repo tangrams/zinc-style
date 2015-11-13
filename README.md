@@ -10,8 +10,8 @@ Mapzen's Zinc style is comparable to Esri's [light gray Canvas](http://blogs.esr
 
 Mapzen offers the Zinc style in three flavors:
 
-1. **[Default](https://github.com/tangrams/zinc-style)** - Full set of labels, including high contrast icons highlighting OpenStreetMap business listing data.
-2. **Some labels** (this repo) - Streets, cities, and water bodies are labeled and some big parks are named only (no icons). No business labels. Good for data visualization overlays that need a to provide some location context.
+2. **Default** (this repo) - Some labels for streets, cities, water bodies, and some big parks with name only (no icons). No business labels. Good for data visualization overlays that need to provide some location context.
+1. **[More labels](https://github.com/tangrams/zinc-style-more-labels)** - Full set of labels, including high contrast icons highlighting OpenStreetMap business listing data.
 3. **[No labels](https://github.com/tangrams/zinc-style-no-labels)** - Just the lines and polygons, please. 
 
 **Looking for a different style?** We offer a range of styles including [Refill](https://github.com/tangrams/refill) (high contrast black & white cartography) and [Cinnabar](https://github.com/tangrams/cinnabar-style) (classic color cartography). 
