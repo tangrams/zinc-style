@@ -10,6 +10,40 @@
 # https://github.com/tangrams/zinc-style
 #
 
+labels-global:
+    - &text_visible_continent         true
+    - &text_visible_admin             true
+    - &text_visible_populated_places  true
+    - &icon_visible_populated_places  true
+    - &text_visible_neighbourhoods    true
+    - &text_visible_neighbourhoods_e  true
+    - &text_visible_water_labels      true
+    - &label_visible_landuse_green    true
+    - &icon_visible_landuse_green     true
+    - &text_visible_landuse_green     true
+    - &label_visible_poi_landuse      true
+    - &icon_visible_poi_landuse       true
+    - &text_visible_poi_landuse       true
+    - &label_visible_poi_landuse_e    true
+    - &icon_visible_poi_landuse_e     true
+    - &text_visible_poi_landuse_e     true
+    - &label_visible_station          true
+    - &icon_visible_station           true
+    - &text_visible_station           true
+    - &text_visible_highway           true
+    - &text_visible_highway_e         false
+    - &text_visible_trunk_primary     true
+    - &text_visible_trunk_primary_e   false
+    - &text_visible_secondary         true
+    - &text_visible_secondary_e       false
+    - &text_visible_tertiary          true
+    - &text_visible_tertiary_e        true
+    - &text_visible_minor_road        true
+    - &text_visible_minor_road_e      true
+    - &text_visible_service_road      true
+    - &text_visible_path              true
+    - &text_visible_steps             true
+
 zinc-light-gray-colors:
     cameras:
         - &camera_settings            { type: isometric, axis: [0, .1], vanishing_point: [0, -500] }
