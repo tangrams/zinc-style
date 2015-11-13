@@ -7,7 +7,8 @@
 # Zinc basemap style is for you. Please use and adapt the open source scene file in  
 # your own projects!
 #
-# https://github.com/tangrams/zinc-style
+# Authors: Nathaniel V. Kelso, Geraldine Sarmiento
+# Read more: https://github.com/tangrams/zinc-style
 #
 
 labels-global:
@@ -16,20 +17,20 @@ labels-global:
     - &text_visible_populated_places  true
     - &icon_visible_populated_places  true
     - &text_visible_neighbourhoods    true
-    - &text_visible_neighbourhoods_e  true
+    - &text_visible_neighbourhoods_e  false
     - &text_visible_water_labels      true
     - &label_visible_landuse_green    true
-    - &icon_visible_landuse_green     true
+    - &icon_visible_landuse_green     false
     - &text_visible_landuse_green     true
     - &label_visible_poi_landuse      true
-    - &icon_visible_poi_landuse       true
-    - &text_visible_poi_landuse       true
+    - &icon_visible_poi_landuse       false
+    - &text_visible_poi_landuse       false
     - &label_visible_poi_landuse_e    true
-    - &icon_visible_poi_landuse_e     true
+    - &icon_visible_poi_landuse_e     false
     - &text_visible_poi_landuse_e     true
-    - &label_visible_station          true
-    - &icon_visible_station           true
-    - &text_visible_station           true
+    - &label_visible_station          false
+    - &icon_visible_station           false
+    - &text_visible_station           false
     - &text_visible_highway           true
     - &text_visible_highway_e         false
     - &text_visible_trunk_primary     true
@@ -37,7 +38,7 @@ labels-global:
     - &text_visible_secondary         true
     - &text_visible_secondary_e       false
     - &text_visible_tertiary          true
-    - &text_visible_tertiary_e        true
+    - &text_visible_tertiary_e        false
     - &text_visible_minor_road        true
     - &text_visible_minor_road_e      true
     - &text_visible_service_road      true
@@ -451,10 +452,8 @@ textures:
 sources:
     osm:
         type: TopoJSONTiles
-        #url: '//vector.dev.mapzen.com/osm/all/{z}/{x}/{y}.topojson'
-        #url:  '//mapzen-tiles-prod-us-east-20151007.s3.amazonaws.com/osm/all/{z}/{x}/{y}.topojson'
         #url:  //localhost:8080//osm/all/{z}/{x}/{y}.topojson
-        url:  //vector.mapzen.com/osm/all/{z}/{x}/{y}.topojson?api_key=vector-tiles-HqUVidw
+        url:  //vector.mapzen.com/osm/all/{z}/{x}/{y}.topojson?api_key=vector-tiles-id4gZ6k
 
 camera:
     type: isometric
