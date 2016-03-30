@@ -936,7 +936,6 @@ layers:
                 # but give them all the same outline
                 outline:
                     order: 352
-                    #order: 21 # 15 is the starting aboveground level, plus 6 (this is false, with layer it can be as low as 4 or even negative!?)
             text-blend-order:
                 visible: false    # labels are enabled by each layer below
                 font:
