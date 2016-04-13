@@ -409,60 +409,18 @@ styles:
         base: lines
         texcoords: true
         shaders:
+            defines:
+                background: vec3(.4, .4, .4)
             blocks:
-                global: |
-                    vec2 mirrorTile(vec2 _st, vec2 _zoom){
-                        _st *= _zoom;
-                        if (fract(_st.y * 0.5) > 0.5){
-                            _st.x = _st.x+0.5;
-                            _st.y = 1.0-_st.y;
-                        }
-                        return fract(_st);
-                    }
-
-                    float fillY(vec2 _st, float _pct,float _antia){
-                      return smoothstep( _pct-_antia, _pct, _st.y);
-                    }
-
-                    float chevron(vec2 st){
-                        st = mirrorTile(st,vec2(1.,6.));
-                        float x = st.x*2.; 
-                        float a = floor(1.+sin(x*3.14));
-                        float b = floor(1.+sin((x+1.)*3.14));
-                        float f = fract(x);
-                        return fillY(st,mix(a,b,f),0.01);
-                    }
-
-                    float stripes(vec2 st){
-                        st = st*10.;
-                        return step(.5,1.0-smoothstep(.3,1.,abs(sin(st.y*3.1415))));
-                    }
-
-                    float xMargin(vec2 st,float margin){
-                        return 1.0-clamp(step(margin*.5,st.x)*step(margin*.5,1.0-st.x),0.,1.);
-                    }
-                    
-                    //  Function from Iñigo Quiles
-                    //  https://www.shadertoy.com/view/MsS3Wc
-                    vec3 hsb2rgb( in vec3 c ){
-                        vec3 rgb = clamp(abs(mod(c.x*6.0+vec3(0.0,4.0,2.0),
-                                                 6.0)-3.0)-1.0, 
-                                         0.0, 
-                                         1.0 );
-                        rgb = rgb*rgb*(3.0-2.0*rgb);
-                        return c.z * mix(vec3(1.0), rgb, c.y);
-                    }
-                color: |
-                    vec2 st = v_texcoord;
-                    vec4 foreground = vec4(0.400,0.400,0.400,1.0);
-                    
-                    vec3 color1 = hsb2rgb(vec3(color.r,1.,1.));
-                    vec3 color2 = hsb2rgb(vec3(color.g,1.,1.));
-                    
-                    // Nathaniel un-comment the following lines
-                     color = mix(v_color,foreground, chevron(st) - xMargin(st,.25) );
-                     color = mix(v_color,foreground, stripes(st) );
-                    // color = mix(v_color,foreground, clamp(stripes(st)-xMargin(st,.9),0.,1.) ) ;
+                color: | 
+                    // blend line 50/50 between two colors
+                    float t = fract(v_texcoord.y);
+                    float e = 0.1; // edge feather
+                    vec3 v = vec3(
+                        smoothstep(.0, e, t) * 
+                        (1. - smoothstep(.5, .5 + e, t))
+                    );
+                    color.rgb = mix(color.rgb, background, v);
 
     tools:
         base: polygons
