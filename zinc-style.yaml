@@ -4575,7 +4575,7 @@ layers:
                                 stroke: { color: *text_stroke, width: 4 }
                 early-sizing:
                     filter: { $zoom: { max: 14 } }
-                    draw: { icons: { text: { size: 11px } } }
+                    draw: { icons: { text: { font: { size: 11px } } } }
             landuse-labels-not-green-areas:
                 filter:
                     all:
