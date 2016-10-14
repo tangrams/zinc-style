@@ -4137,8 +4137,8 @@ layers:
                         fill: *text_fill
                         size: 12px
                         stroke: { color: *text_stroke, width: 4 }
-        poi_labels-z14:
-            filter: { $zoom: [14] }
+        poi_labels-z13:
+            filter: { $zoom: { max: 15 } }
             draw: { icons: { text: { font: { size: 11px } } } }
         poi_labels-z15:
             filter: { $zoom: [15,16,17] }
@@ -4293,7 +4293,7 @@ layers:
                     all:
                         - area: true
                         - $geometry: point
-                        - kind: [park, national_park, "park or protected land",conservation, protected_area, nature_reserve, forest, grass]
+                        - kind: [park, national_park, protected_area, nature_reserve, forest, grass]
                     any:
                         # show labels for smaller landuse areas at higher zooms
                         - { $zoom: [5],    area: { min: 10000000000 } }
@@ -4476,14 +4476,14 @@ layers:
                             visible: *text_visible_landuse_green
                             font:
                                 fill: *text_fill
-                                size: 12px
+                                #size: 12px
                                 stroke: { color: *text_stroke, width: 4 }
                 early:
                     filter: { $zoom: { max: 12 } }
                     draw: { icons: { text: { visible: false } } }
-                early2:
-                    filter: { $zoom: { min: 12, max: 14 } }
-                    draw: { icons: { text: { size: 11px } } }
+                #early2:
+#                    filter: { $zoom: { min: 12, max: 14 } }
+#                    draw: { icons: { text: { size: 11px } } }
             school:
                 filter:
                     all:
@@ -4509,11 +4509,11 @@ layers:
                             visible: *text_visible_landuse_green
                             font:
                                 fill: *text_fill
-                                size: 12px
+                                #size: 12px
                                 stroke: { color: *text_stroke, width: 4 }
-                early:
-                    filter: { $zoom: { max: 14 } }
-                    draw: { icons: { text: { font: { size: 11px } } } }
+                #early:
+#                    filter: { $zoom: { max: 14 } }
+#                    draw: { icons: { text: { font: { size: 11px } } } }
             winter_sports:
                 filter:
                     all:
@@ -4582,7 +4582,7 @@ layers:
                         - $zoom: { min: 6 }
                         - area: true
                         - $geometry: point
-                        - not: { kind: [park, national_park, "park or protected land", conservation, protected_area, nature_reserve, airport, aerodrome, university, college, school, kindergarten, winter_sports, zoo, theme_park, resort, aquarium, winery, maze] }
+                        - not: { kind: [park, national_park, conservation, protected_area, nature_reserve, airport, aerodrome, university, college, school, kindergarten, winter_sports, zoo, theme_park, resort, aquarium, winery, maze] }
                     any:
                         # show labels for smaller landuse areas at higher zooms
                         - { $zoom: [5,6,7], area: { min: 5000000000 } }
@@ -4607,11 +4607,11 @@ layers:
                             visible: *text_visible_poi_landuse
                             font:
                                 fill: *text_fill
-                                size: 12px
+                                #size: 12px
                                 stroke: { color: *text_stroke, width: 4 }
-                early-sizing:
-                    filter: { $zoom: { max: 14 } }
-                    draw: { icons: { text: { size: 11px } } }
+                #early-sizing:
+#                    filter: { $zoom: { max: 14 } }
+#                    draw: { icons: { text: { size: 11px } } }
                 building-like:
                     filter: { kind: [commercial,residential,warehouse,public,dormitory], osm_relation: false }
                     draw:
@@ -5542,7 +5542,7 @@ layers:
             #         - { $zoom: { min: 15 }, area: { min: 2000 } }
             #         - { $zoom: { min: 16 } }
             # national_park:
-            #     filter: { kind: [national_park, "park or protected land"], not: { operator: [ "United States Forest Service", "US Forest Service", "U.S. Forest Service", "USDA Forest Service" ] } }
+            #     filter: { kind: [national_park], not: { operator: [ "United States Forest Service", "US Forest Service", "U.S. Forest Service", "USDA Forest Service" ] } }
             #     draw:
             #         polygons:
             #             order: 18
@@ -5745,7 +5745,7 @@ layers:
             #                 color: *green6
             #                 width: [[9,0px],[10,2px],[12,4px]]
             # parks-and-national-forests-not-national-park:
-            #     filter: { $zoom: { min: 4 }, kind: [park, national_park, "park or protected land"], not: { operator: [ "United States National Park Service", "US National Park Service" ] } }
+            #     filter: { $zoom: { min: 4 }, kind: [park, national_park], not: { operator: [ "United States National Park Service", "US National Park Service" ] } }
             #     # default for national forests and more?
             #     draw:
             #         polygons:
