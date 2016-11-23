@@ -4823,15 +4823,19 @@ layers:
         data: { source: mapzen, layer: [pois] }
         visible: *label_visible_poi_landuse
         filter:
-            not: { kind: [building,farm,tree,gate,address,apron] }
-            any:
-                - area: false
-                  all:
-                      - $zoom: { min: 12 }
-                - area: true
-                  all:
-                      - $geometry: point
-                      - kind: true
+            all:
+                - not: { kind: [building,address,farm,tree,apron,residential,commercial,industrial] }
+                - $geometry: point
+                # White list a few kinds to "always" show per the tile zoom inclusion, else test feature's min_zoom
+                #- function() { return feature.min_zoom <= $zoom }
+                - function() { if( feature.kind == 'restaurant' || feature.kind == 'landmark' || feature.kind == 'cafe' ) { return true } else { return feature.min_zoom <= $zoom } }
+                - any:
+                    - area: false
+                      all:
+                          - $zoom: { min: 12 }
+                    - area: true
+                      all:
+                          - kind: true
         draw:
             icons:
                 size: [[13, 12px], [16, 16px], [18, 19px]]
