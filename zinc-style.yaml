@@ -2828,7 +2828,7 @@ layers:
                     color: *orange3
                     width: [[13,1.5px],[14,2px],[15, 3px], [16, 5px], [18, 10m], [19, 15m]]
         airport-lines:
-            filter: { kind: aeroway }
+            filter: { kind: aeroway, kind_detail: [runway,taxiway] }
             draw:
                 lines:
                     color: *grey2
