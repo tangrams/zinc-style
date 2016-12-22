@@ -650,228 +650,18 @@ camera:
 #        ambient: .85
 
 styles:
-    dashedline:
+    dashed:
         base: lines
-        texcoords: true
-        shaders:
-            blocks:
-                global: |
-                    vec2 mirrorTile(vec2 _st, vec2 _zoom){
-                        _st *= _zoom;
-                        if (fract(_st.y * 0.5) > 0.5){
-                            _st.x = _st.x+0.5;
-                            _st.y = 1.0-_st.y;
-                        }
-                        return fract(_st);
-                    }
-
-                    float fillY(vec2 _st, float _pct,float _antia){
-                      return smoothstep( _pct-_antia, _pct, _st.y);
-                    }
-
-                    float chevron(vec2 st){
-                        st = mirrorTile(st,vec2(1.,6.));
-                        float x = st.x*2.;
-                        float a = floor(1.+sin(x*3.14));
-                        float b = floor(1.+sin((x+1.)*3.14));
-                        float f = fract(x);
-                        return fillY(st,mix(a,b,f),0.01);
-                    }
-
-                    float stripes(vec2 st){
-                        st = st*10.;
-                        return step(.5,1.0-smoothstep(.3,1.,abs(sin(st.y*3.1415))));
-                    }
-
-                    float xMargin(vec2 st,float margin){
-                        return 1.0-clamp(step(margin*.5,st.x)*step(margin*.5,1.0-st.x),0.,1.);
-                    }
-
-                    //  Function from Iñigo Quiles
-                    //  https://www.shadertoy.com/view/MsS3Wc
-                    vec3 hsb2rgb( in vec3 c ){
-                        vec3 rgb = clamp(abs(mod(c.x*6.0+vec3(0.0,4.0,2.0),
-                                                 6.0)-3.0)-1.0,
-                                         0.0,
-                                         1.0 );
-                        rgb = rgb*rgb*(3.0-2.0*rgb);
-                        return c.z * mix(vec3(1.0), rgb, c.y);
-                    }
-                color: |
-                    vec2 st = v_texcoord;
-                    vec4 foreground = vec4(0.400,0.400,0.400,1.0);
-
-                    vec3 color1 = hsb2rgb(vec3(color.r,1.,1.));
-                    vec3 color2 = hsb2rgb(vec3(color.g,1.,1.));
-
-                    // Nathaniel un-comment the following lines
-                     color = mix(v_color,foreground, chevron(st) - xMargin(st,.25) );
-                     color = mix(v_color,foreground, stripes(st) );
-                    // color = mix(v_color,foreground, clamp(stripes(st)-xMargin(st,.9),0.,1.) ) ;
-
-    tools:
-        base: polygons
-        shaders:
-            extensions: OES_standard_derivatives
-            blocks:
-                global: |
-                    // GridTile
-                    //=============================
-                    varying vec3 v_pos;
-
-                    #ifdef TANGRAM_FRAGMENT_SHADER
-
-                    vec2 TileCoords() {
-                        return fract(v_pos.xy*0.0002445);
-                    }
-
-                    bool grid(vec2 st, float res, float press) {
-                        vec2 grid = fract(st*res);
-                        return grid.x < res*press || grid.y < res*press;
-                    }
-
-                    float TileGrid(float res) {
-                        vec2 st = TileCoords()*100.*res;
-                        float pct = 0.0;
-                        float press = 0.4+(1.0-fract(u_map_position.z))*0.1;
-                        if (grid(st,0.01,press)) pct += 0.5;
-                        if (grid(st,0.1,press)) pct += 0.1;
-                        return pct;
-                    }
-
-                    float TileGrid() {
-                        return mix(TileGrid(1.),TileGrid(2.),fract(u_map_position.z));
-                    }
-
-                    float aastep(float threshold, float value) {
-                      #ifdef TANGRAM_EXTENSION_OES_standard_derivatives
-                        float afwidth = length(vec2(dFdx(value), dFdy(value))) * 0.70710678118654757;
-                        return smoothstep(threshold-afwidth, threshold+afwidth, value);
-                      #else
-                        return step(threshold, value);
-                      #endif
-                    }
-
-                    vec2 tile(vec2 _st, float _zoom){
-                      _st *= _zoom;
-                      return fract(_st);
-                    }
-
-                    vec2 brickTile(vec2 st, float zoom){
-                      st *= zoom;
-                      if (fract(st.y * 0.5) > 0.5){
-                          st.x += 0.5;
-                      }
-                      return fract(st);
-                    }
-
-                    float circleDF(vec2 st){
-                      vec2 pos = vec2(0.5)-st;
-                      return dot(pos,pos)*3.14;
-                    }
-
-                    float circle(vec2 st, float radius){
-                      radius *= 0.75;
-                      return 1.-aastep(radius,circleDF(st));
-                    }
-
-                    float dots(vec2 st, float size){
-                        st = brickTile(st, 2.);
-                        return circle(st, size);
-                    }
-
-                    float dotsDF(vec2 st){
-                        st = brickTile(st, 2.);
-                        return circleDF(st);
-                    }
-
-                    float TileDots(float scale, float size) {
-                        vec2 IN = TileCoords()*scale;
-                        vec2 OUT = TileCoords()*scale*2.;
-                        float pct = fract(u_map_position.z);
-                        pct = pow(pct,6.);
-                        // return mix(dots(fract(IN),size*(1.-pct)), dots(fract(OUT),size*pct), pct);
-                        return mix(dots(fract(IN),size*(1.-pct)), dots(fract(OUT),size*pct), pct);
-                    }
-
-                    float TileDotsDF(float scale, float size) {
-                        vec2 IN = TileCoords()*scale;
-                        vec2 OUT = TileCoords()*scale*2.;
-                        float pct = fract(u_map_position.z);
-                        pct = pow(pct,15.);
-                        float d = 0.0;
-                        d = dotsDF(fract(IN))*(1.-pct) + dotsDF(fract(OUT))*pct;
-                        d = 1.-aastep(size,d);
-                        return d;
-                    }
-
-                    // Grain
-                    //=============================
-                    float random(vec2 p) {
-                        return fract(1e4 * sin(17.0 * p.x + p.y * 0.1) * (0.1 + abs(sin(p.y * 13.0 + p.x))));
-                    }
-
-                    float noise(vec2 x) {
-                        vec2 i = floor(x);
-                        vec2 f = fract(x);
-                        float a = random(i);
-                        float b = random(i + vec2(1.0, 0.0));
-                        float c = random(i + vec2(0.0, 1.0));
-                        float d = random(i + vec2(1.0, 1.0));
-                        vec2 u = f * f * (3.0 - 2.0 * f);
-                        return mix(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
-                    }
-
-                    float fbm(in vec2 p) {
-                        float s = 0.0;
-                        float m = 0.0;
-                        float a = 0.5;
-                        for(int i=0; i<2; i++ ){
-                            s += a * noise(p);
-                            m += a;
-                            a *= 0.5;
-                            p *= 2.0;
-                        }
-                        return s/m;
-                    }
-
-                    float grain(vec2 pos) {
-                        vec2 st = pos/u_resolution.xy-vec2(.5);
-                        return dot(st,st)+(fbm(pos*0.6)*0.1);
-                    }
-                    #endif
-                position: |
-                    // GridTile
-                    v_pos = modelPosition().xyz * 32767.;
-
-    grid:
-        base: polygons
-        mix: tools
-        shaders:
-            blocks:
-                filter: |
-                    vec2 st = (TileCoords()+vec2(.4))*1000.;
-                    color.rgb = mix(vec3(0.899,0.95,1.0), vec3(0.899,0.95,1.0), gl_FragCoord.x / u_resolution.x);
-                    color.rgb -= grain(gl_FragCoord.xy)*0.1;
-
-                    color.rgb = mix(color.rgb, vec3(0.639,0.886,0.906), TileGrid());
-                    //float g = grain(st);
-                    //color.rgb = mix(color.rgb, vec3(0.475,0.853,0.853),pow(g,3.5));
-
-    ground:
-        base: polygons
-        mix: tools
-        shaders:
-            blocks:
-                filter: |
-                    color.rgb -= grain(gl_FragCoord.xy)*0.5;
-    ground2:
-        base: polygons
-        mix: tools
-        shaders:
-            blocks:
-                filter: |
-                    color.rgb -= grain(gl_FragCoord.xy)*0.2;
+        dash: [1.25, 1.25]
+        dash_background_color: [0.749,0.749,0.749]
+    dashed_big:
+        base: lines
+        dash: [2.0, 1.0]
+        dash_background_color: [0.749,0.749,0.749]
+    dashed_steps:
+        base: lines
+        dash: [0.25, 0.25]
+        dash_background_color: [0.749,0.749,0.749]
     lines_transparent:
         base: lines
         blend: overlay
@@ -2928,7 +2718,7 @@ layers:
                     - kind: path
                     - kind_detail: steps
             draw:
-                dashedline:
+                dashed_steps:
                     order: function() { return feature.sort_rank; }
                     #cap: round
                     #join: round
@@ -2936,25 +2726,25 @@ layers:
                     width: [[14, 0.1], [17, 0.1]]
                     outline:
                         color: *path_steps1
-                        width: [[14, 1.0], [15, 1.5], [18, 3m]]
+                        width: [[14,1.0px],[15,1.5px],[18,2m]]
             in_park:
                 filter: { landuse_kind: [park,nature_reserve,conservation,golf_course,garden] }
                 draw:
-                    dashedline:
+                    dashed_steps:
                         color: [[14,*green1_r],[16,*minor_road3]]
                         outline:
                             color: *green1_r
             in_university:
                 filter: { landuse_kind: university }
                 draw:
-                    dashedline:
+                    dashed_steps:
                         color: [[14,*brown1_r],[16,*minor_road3]]
                         outline:
                             color: *brown1_r
             in_hospital:
                 filter: { landuse_kind: hospital }
                 draw:
-                    dashedline:
+                    dashed_steps:
                         color: [[14,*red1_r],[16,*minor_road3]]
                         outline:
                             color: *red1_r
@@ -3302,14 +3092,12 @@ layers:
         draw:
             lines:
                 interactive: true
-                order: function() { return feature.sort_rank; }
+                order: function() { return (feature.sort_rank + 100); }
         country:
             filter:
-                kind: country
-                # any:
-                #     - type: country
-                #     - kind: nation
-                #     - admin_level: 2
+                any:
+                    - kind: country
+                    - admin_level: 2
             draw:
                 lines:
                     interactive: true
@@ -3320,6 +3108,49 @@ layers:
                 draw:
                     lines:
                         visible: false
+            labels-z9-up:
+                filter: { name: true, $zoom: { min: 9 }, not: { maritime_boundary: true } }
+                draw:
+                    text-blend-order:
+                        priority: 2
+                        visible: *text_visible_admin
+                        text_source: name
+                        # text_source:  |
+                        #     function() {
+                        #         var right = (global.ux_language && feature['name:right:'+global.ux_language]) || (global.ux_language_fallback && feature['name:right:'+global.ux_language_fallback]) || feature['name:right'];
+                        #         var left = (global.ux_language && feature['name:left:'+global.ux_language]) || (global.ux_language_fallback && feature['name:left:'+global.ux_language_fallback]) || feature['name:left'];
+                        #         if( right && left ) {
+                        #             if( right.includes(' ') || left.includes(' ') ) {
+                        #                 return left + " - " + right;
+                        #             } else {
+                        #                 return right + '\n' + left;
+                        #             }
+                        #         } else {
+                        #             return (global.ux_language && feature['name:'+global.ux_language]) || (global.ux_language_fallback && feature['name:'+global.ux_language_fallback]) || feature.name;
+                        #         }
+                        #     }
+                        text_wrap: 100
+                        font:
+                            family: *text_font_family
+                            size: 9px
+                            fill: [0.00,0.00,0.00]
+                            transform: uppercase
+        other_country_boundary_disputed_etc:
+            filter: { kind: [disputed, indefinite, indeterminate, lease_limit, line_of_control, overlay_limit] }
+            draw:
+                dashed:
+                    order: function() { return (feature.sort_rank + 100); }
+                    color: *country_boundary
+                    width: [[1,0.2px],[9,1.5px],[17,10m]]
+            disputed:
+                filter: { kind: [disputed, line_of_control] }
+                draw:
+                    dashed:
+                        visible: false
+                    dashed_big:
+                        order: function() { return (feature.sort_rank + 100); }
+                        color: *country_boundary
+                        width: [[1,0.5px],[9,2.5px],[17,14m]]
         region:
             filter:
                 kind: region
@@ -4100,7 +3931,7 @@ layers:
                         fill: *text_fill
                         weight: normal
                         transform: uppercase
-                        stroke: { color: *text_stroke, width: 2 }
+                        stroke: { color: *text_stroke, width: 3 }
             neighborhood-z11-z12:
                 filter:
                     $zoom: [11]
@@ -4125,7 +3956,6 @@ layers:
                         visible: *text_visible_neighbourhoods_e
                         font:
                             size: 10px
-                            stroke: { color: *text_stroke, width: 3 }
             neighborhood-z14:
                 filter:
                     $zoom: [14]
@@ -4138,7 +3968,7 @@ layers:
                         visible: *text_visible_neighbourhoods
                         font:
                             size: 11px
-                            stroke: { color: *text_stroke, width: 3 }
+                            stroke: { color: *text_stroke, width: 4 }
             neighborhood-z15:
                 filter:
                     $zoom: [15]
@@ -4152,7 +3982,7 @@ layers:
                         font:
                             size: 13px
                             weight: 300
-                            stroke: { color: *text_stroke, width: 3 }
+                            stroke: { color: *text_stroke, width: 4 }
                 z15-new:
                     filter:
                         all:
