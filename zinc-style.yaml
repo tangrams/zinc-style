@@ -16,50 +16,6 @@ global:
     sdk_shield_text_color: white
 
 labels-global:
-    # - &text_visible_continent         true
-    # - &text_visible_island            true
-    # - &text_visible_admin             true
-    # - &text_visible_populated_places  true
-    # - &icon_visible_populated_places  true
-    # - &text_visible_neighbourhoods    true
-    # - &text_visible_neighbourhoods_e  true
-    # - &text_visible_building          true
-    # - &text_visible_address           true
-    # - &text_visible_water_labels      true
-    # - &label_visible_landuse_green    true
-    # - &icon_visible_landuse_green     true     # needs work
-    # - &text_visible_landuse_green     true
-    # - &label_visible_poi_landuse      true
-    # - &icon_visible_poi_landuse       false     # false for default
-    # - &text_visible_poi_landuse       false     # false for default
-    # - &text_visible_landuse_generic   false     # false for default
-    # - &label_visible_poi_landuse_e    true
-    # - &icon_visible_poi_landuse_e     false     # false for default
-    # - &text_visible_poi_landuse_e     true
-    # - &label_visible_station          false     # false for default
-    # - &icon_visible_station           false     # false for default
-    # - &text_visible_station           false     # false for default
-    # - &text_visible_highway           true
-    # - &text_visible_highway_e         false     # false for default, false for more
-    # - &text_visible_trunk_primary     true
-    # - &text_visible_trunk_primary_e2  false     # false for default, false for more
-    # - &text_visible_trunk_primary_e   false     # false for default, false for more
-    # - &text_visible_secondary         true
-    # - &text_visible_secondary_e       false     # false for default, false for more
-    # - &text_visible_tertiary          true
-    # - &text_visible_tertiary_e        false     # false for default, false for more
-    # - &text_visible_minor_road        true
-    # - &text_visible_minor_road_e      true
-    # - &text_visible_service_road      true
-    # - &text_visible_path              true
-    # - &text_visible_piste             true
-    # - &text_visible_steps             true
-    # - &text_visible_aerialway         true
-    # - &text_visible_shields           true
-    # - &text_visible_exits             true
-    # - &text_visible_exits_e           false     # false for default, false for more
-    # - &text_visible_airport_gate      true
-
     - &text_visible_continent         true
     - &text_visible_island            true
     - &text_visible_admin             true
@@ -71,27 +27,27 @@ labels-global:
     - &text_visible_address           true
     - &text_visible_water_labels      true
     - &label_visible_landuse_green    true
-    - &icon_visible_landuse_green     true    # needs work
+    - &icon_visible_landuse_green     true     # needs work
     - &text_visible_landuse_green     true
     - &label_visible_poi_landuse      true
-    - &icon_visible_poi_landuse       true     # false for default
-    - &text_visible_poi_landuse       true     # false for default
-    - &text_visible_landuse_generic   true     # false for default
+    - &icon_visible_poi_landuse       false     # false for default
+    - &text_visible_poi_landuse       false     # false for default
+    - &text_visible_landuse_generic   false     # false for default
     - &label_visible_poi_landuse_e    true
-    - &icon_visible_poi_landuse_e     true     # false for default
+    - &icon_visible_poi_landuse_e     false     # false for default
     - &text_visible_poi_landuse_e     true
-    - &label_visible_station          true     # false for default
-    - &icon_visible_station           true     # false for default
-    - &text_visible_station           true     # false for default
+    - &label_visible_station          false     # false for default
+    - &icon_visible_station           false     # false for default
+    - &text_visible_station           false     # false for default
     - &text_visible_highway           true
-    - &text_visible_highway_e         true     # false for default, false for more
+    - &text_visible_highway_e         false     # false for default, false for more
     - &text_visible_trunk_primary     true
-    - &text_visible_trunk_primary_e2  true     # false for default, false for more
-    - &text_visible_trunk_primary_e   true     # false for default, false for more
+    - &text_visible_trunk_primary_e2  false     # false for default, false for more
+    - &text_visible_trunk_primary_e   false     # false for default, false for more
     - &text_visible_secondary         true
-    - &text_visible_secondary_e       true     # false for default, false for more
+    - &text_visible_secondary_e       false     # false for default, false for more
     - &text_visible_tertiary          true
-    - &text_visible_tertiary_e        true     # false for default, false for more
+    - &text_visible_tertiary_e        false     # false for default, false for more
     - &text_visible_minor_road        true
     - &text_visible_minor_road_e      true
     - &text_visible_service_road      true
@@ -101,7 +57,7 @@ labels-global:
     - &text_visible_aerialway         true
     - &text_visible_shields           true
     - &text_visible_exits             true
-    - &text_visible_exits_e           true     # false for default, false for more
+    - &text_visible_exits_e           false     # false for default, false for more
     - &text_visible_airport_gate      true
 
 zinc-light-gray-colors:
@@ -3114,27 +3070,27 @@ layers:
                     text-blend-order:
                         priority: 2
                         visible: *text_visible_admin
-                        text_source: name
-                        # text_source:  |
-                        #     function() {
-                        #         var right = (global.ux_language && feature['name:right:'+global.ux_language]) || (global.ux_language_fallback && feature['name:right:'+global.ux_language_fallback]) || feature['name:right'];
-                        #         var left = (global.ux_language && feature['name:left:'+global.ux_language]) || (global.ux_language_fallback && feature['name:left:'+global.ux_language_fallback]) || feature['name:left'];
-                        #         if( right && left ) {
-                        #             if( right.includes(' ') || left.includes(' ') ) {
-                        #                 return left + " - " + right;
-                        #             } else {
-                        #                 return right + '\n' + left;
-                        #             }
-                        #         } else {
-                        #             return (global.ux_language && feature['name:'+global.ux_language]) || (global.ux_language_fallback && feature['name:'+global.ux_language_fallback]) || feature.name;
-                        #         }
-                        #     }
+                        text_source: |
+                            function() {
+                                    var right = (global.ux_language && feature['name:right:'+global.ux_language]) || (global.ux_language_fallback && feature['name:right:'+global.ux_language_fallback]) || feature['name:right'];
+                                    var left = (global.ux_language && feature['name:left:'+global.ux_language]) || (global.ux_language_fallback && feature['name:left:'+global.ux_language_fallback]) || feature['name:left'];
+                                    if( right && left ) {
+                                        //if( right.includes(' ') || left.includes(' ') ) {
+                                            return left + " - " + right;
+                                        //} else {
+                                        //    return right + '\n' + left;
+                                        //}
+                                    } else {
+                                        return (global.ux_language && feature['name:'+global.ux_language]) || (global.ux_language_fallback && feature['name:'+global.ux_language_fallback]) || feature.name;
+                                    }
+                                }
                         text_wrap: 100
                         font:
                             family: *text_font_family
                             size: 9px
                             fill: [0.00,0.00,0.00]
                             transform: uppercase
+                            stroke: { color: *earth1, width: 3px }
         other_country_boundary_disputed_etc:
             filter: { kind: [disputed, indefinite, indeterminate, lease_limit, line_of_control, overlay_limit] }
             draw:
@@ -3174,6 +3130,38 @@ layers:
                 draw:
                     lines:
                         visible: false
+
+            labels-z9-up:
+                filter: { name: true, $zoom: { min: 9 }, not: { maritime_boundary: true } }
+                draw:
+                    text-blend-order:
+                        priority: 3
+                        visible: global.text_visible_admin
+                        text_source: |
+                            function() {
+                                    var right = (global.ux_language && feature['name:right:'+global.ux_language]) || (global.ux_language_fallback && feature['name:right:'+global.ux_language_fallback]) || feature['name:right'];
+                                    var left = (global.ux_language && feature['name:left:'+global.ux_language]) || (global.ux_language_fallback && feature['name:left:'+global.ux_language_fallback]) || feature['name:left'];
+                                    if( right && left ) {
+                                        //if( right.includes(' ') || left.includes(' ') ) {
+                                            return left + " - " + right;
+                                        //} else {
+                                        //    return right + '\n' + left;
+                                        //}
+                                    } else {
+                                        return (global.ux_language && feature['name:'+global.ux_language]) || (global.ux_language_fallback && feature['name:'+global.ux_language_fallback]) || feature.name;
+                                    }
+                                }
+                        text_wrap: 100px
+                        offset: 10px
+                        anchor: top
+                        font:
+                            family: Varela
+                            size: 9px
+                            weight: 200
+                            fill: [0.4,0.4,0.4]
+                            # stroke: { color: global.text_stroke, width: 4 }
+                            transform: uppercase
+                            stroke: { color: *earth1, width: 3px }
 
 #        subregions:
 #            filter: { kind: county, $zoom: { min: 10 } }
@@ -3238,7 +3226,7 @@ layers:
         country:
             filter:
                 kind: country
-                $zoom: { min: 2, max: 9 }
+                $zoom: { min: 3, max: 9 }
             draw:
                 text-blend-order:
                     priority: 3
@@ -3466,18 +3454,18 @@ layers:
             #
             # NOTE: So instead we play a shell game with symbolizers per zoom
             #
-            _icons_later: 
+            _icons_later:
                 filter: { $zoom: { min: 11 } }
                 draw:
-                    icons: 
+                    icons:
                         visible: false
                     text-blend-order:
                         visible: *text_visible_populated_places
 
-            _text_early: 
+            _text_early:
                 filter: { $zoom: { max: 11 } }
                 draw:
-                    text-blend-order: 
+                    text-blend-order:
                         visible: false
             # END HACK
 
@@ -3512,7 +3500,7 @@ layers:
                         visible: false
 
             halo-populated-places:
-                filter: 
+                filter:
                     $zoom: { min: 8 }
                 draw:
                     icons:
@@ -5053,7 +5041,7 @@ layers:
         water-line-labels:
             draw:
                 text-blend-order:
-                    font: 
+                    font:
                         size: [[14,10px],[17,14px]]
         not-river-not-stream:
             filter: { kind: [canal,dam,ditch,drain], $zoom: { max: 16 } }
