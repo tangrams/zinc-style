@@ -875,10 +875,6 @@ styles:
         blend: overlay
         blend_order: 0
 
-scene:
-    background:
-        color: global.scene1
-
 fonts:
     Open Sans:
         - weight: 300 # Light
@@ -899,6 +895,10 @@ fonts:
         - weight: normal
           #url: https://fonts.gstatic.com/s/montserrat/v7/zhcz-_WihjSQC0oHJ9TCYL3hpw3pgy2gAi-Ip7WPMi0.woff
           url: fonts/Montserrat-Regular.woff
+
+scene:
+    background:
+        color: global.earth1
 
 layers:
     # Map overlays for styling the server response (using special source layer names) for route line, current location, and search result pins
@@ -1139,99 +1139,257 @@ layers:
 
 
     # Basemap styling
-    earth:
-        data: { source: mapzen, layer: earth }
-        draw:
-            polygons:
-                order: function() { return feature.sort_rank; }
-                color: global.earth1
-
-    ocean-water:
+    water:
         data: { source: mapzen, layer: water }
-        # don't filter ocean polys because OSM ocean split tiles don't have coherent areas
-        filter: { kind: ocean }
-        draw:
-            polygons:
-                order: function() { return feature.sort_rank; }
-                color: global.water1
-        water_boundaries-ocean:
-            filter: { boundary: true, $zoom: { min: 10 } }
+        ocean-water:
+            # don't filter ocean polys because OSM ocean split tiles don't have coherent areas
+            filter: { kind: ocean }
             draw:
-                lines:
-                    order: function() { return feature.sort_rank; }
-                    color: global.water1_o
-                    width: [[10,1px],[12,2px]]
-                    join: round
+                polygons:
+                    order: global.feature_order
+                    color: global.water1
+            water_boundaries-ocean:
+                filter: { boundary: true, $zoom: { min: 10 } }
+                draw:
+                    lines:
+                        order: global.feature_order
+                        color: global.water1_o
+                        width: [[10,1px],[12,2px]]
+                        join: round
 
-    water-not-ocean:
-        data: { source: mapzen, layer: water }
-        filter: { not: { kind: ocean } }
-        draw:
-            polygons:
-                order: function() { return feature.sort_rank; }
-                #color: global.water1
-        inland-water:
+        water-not-ocean:
+            filter: { not: { kind: ocean } }
+            draw:
+                polygons:
+                    order: global.feature_order
+                    #color: global.water1
+            inland-water:
+                filter:
+                    all:
+                        - kind: [lake, water, riverbank, reservoir, playa, swimming_pool]
+                    any:
+                        # limit show smaller landuse areas to higher zooms
+                        - { $zoom: { min: 1 },  area: { min: 40000000000 } }
+                        - { $zoom: { min: 2 },  area: { min: 20000000000 } }
+                        # some weird natural earth scale set transition
+                        - { $zoom: { min: 3 },  area: { min: 80000000000 } }
+                        - { $zoom: { min: 4 },  area: { min: 5000000000 } }
+                        - { $zoom: { min: 5 },  area: { min: 700000000 } }
+                        - { $zoom: { min: 6 },  area: { min: 500000000 } }
+                        - { $zoom: { min: 7 },  area: { min: 160000000 } }
+                        - { $zoom: { min: 8 },  area: { min: 40000000 } }
+                        - { $zoom: { min: 9 },  area: { min: 10000000 } }
+                        - { $zoom: { min: 10 }, area: { min: 8000000 } }
+                        - { $zoom: { min: 11 }, area: { min: 2000000 } }
+                        - { $zoom: { min: 12 }, area: { min: 200000 } }
+                        - { $zoom: { min: 13 }, area: { min: 100000 } }
+                        - { $zoom: { min: 14 }, area: { min: 2000 } }
+                        - { $zoom: { min: 15 } }
+                draw:
+                    polygons:
+                        color: global.water1
+            other-water-areas:
+                filter: { not: { kind: [lake, water, reservoir, playa] }, $zoom: { min: 11 }, area: { min: 100 } }
+                draw:
+                    polygons:
+                        color: global.water1
+            playas:
+                filter: { kind: playa }
+                draw:
+                    polygons:
+                        order: function() { return feature.sort_rank + 1; }
+                        color: global.water2
+    #        swimming_pool:
+    #            filter: { kind: swimming_pool }
+    #            draw:
+    #                polygons:
+    #                    order: 8
+            water_boundaries-not-ocean:
+                filter:
+                    all:
+                        - boundary: true
+                        - $zoom: { min: 14 }
+                    any:
+                        - { $zoom: { min: 14 }, area: { min: 2000 } }
+                        - { $zoom: { min: 15 } }
+                draw:
+                    lines:
+                        order: global.feature_order
+                        color: global.water2_o
+                        width: [[14,1.0px],[16,1.5px],[18,2m]]
+                        join: round
+            river:
+                filter: { kind: [river,canal,stream,dam,ditch,drain], $zoom: { min: 13 } }
+                draw:
+                    lines:
+                        order: global.feature_order
+                        color: global.water2_o
+                        width: [[13,0.5px],[14,1.0px],[16,1.5px],[18,4m]]
+                        join: round
+
+        water-labels:
             filter:
                 all:
-                    - kind: [lake, water, riverbank, reservoir, playa, swimming_pool]
-                any:
-                    # limit show smaller landuse areas to higher zooms
-                    - { $zoom: { min: 1 },  area: { min: 40000000000 } }
-                    - { $zoom: { min: 2 },  area: { min: 20000000000 } }
-                    # some weird natural earth scale set transition
-                    - { $zoom: { min: 3 },  area: { min: 80000000000 } }
-                    - { $zoom: { min: 4 },  area: { min: 5000000000 } }
-                    - { $zoom: { min: 5 },  area: { min: 700000000 } }
-                    - { $zoom: { min: 6 },  area: { min: 500000000 } }
-                    - { $zoom: { min: 7 },  area: { min: 160000000 } }
-                    - { $zoom: { min: 8 },  area: { min: 40000000 } }
-                    - { $zoom: { min: 9 },  area: { min: 10000000 } }
-                    - { $zoom: { min: 10 }, area: { min: 8000000 } }
-                    - { $zoom: { min: 11 }, area: { min: 2000000 } }
-                    - { $zoom: { min: 12 }, area: { min: 200000 } }
-                    - { $zoom: { min: 13 }, area: { min: 100000 } }
-                    - { $zoom: { min: 14 }, area: { min: 2000 } }
-                    - { $zoom: { min: 15 } }
-            draw:
-                polygons:
-                    color: global.water1
-        other-water-areas:
-            filter: { not: { kind: [lake, water, reservoir, playa] }, $zoom: { min: 11 }, area: { min: 100 } }
-            draw:
-                polygons:
-                    color: global.water1
-        playas:
-            filter: { kind: playa, $zoom: {min: 6} }
-            draw:
-                polygons:
-                    color: global.water2
-#        swimming_pool:
-#            filter: { kind: swimming_pool }
-#            draw:
-#                polygons:
-#                    order: 8
-        water_boundaries-not-ocean:
-            filter:
-                all:
-                    - boundary: true
-                    - $zoom: { min: 14 }
-                any:
-                    - { $zoom: { min: 14 }, area: { min: 2000 } }
-                    - { $zoom: { min: 15 } }
-            draw:
-                lines:
-                    order: function() { return feature.sort_rank; }
-                    color: global.water2_o
-                    width: [[14,1.0px],[16,1.5px],[18,2m]]
-                    join: round
-        river:
-            filter: { kind: [river,canal,stream,dam,ditch,drain], $zoom: { min: 13 } }
-            draw:
-                lines:
-                    order: function() { return feature.sort_rank; }
-                    color: global.water2_o
-                    width: [[13,0.5px],[14,1.0px],[16,1.5px],[18,4m]]
-                    join: round
+                    - name: true
+                    - function() { return global.text_visible_water_labels; }
+            water-area-labels:
+                filter:
+                    all:
+                        - $geometry: point
+                        - not: { kind: [riverbank, dock, playa] }
+                        - area: true
+                    any:
+                        # show labels for smaller landuse areas at higher zooms
+                        - { $zoom: { min: 5 },  area: { min: 10000000000 } }
+                        - { $zoom: { min: 6 },  area: { min: 5000000000 } }
+                        - { $zoom: { min: 7 },  area: { min: 400000000 } }
+                        - { $zoom: { min: 8 },  area: { min: 200000000 } }
+                        - { $zoom: { min: 9 },  area: { min: 100000000 } }
+                        - { $zoom: { min: 10 }, area: { min: 100000000 } }
+                        - { $zoom: { min: 11 }, area: { min: 10000000 } }
+                        - { $zoom: { min: 12 }, area: { min: 2000000 } }
+                        - { $zoom: { min: 13 }, area: { min: 1000000 } }
+                        - { $zoom: { min: 14 }, area: { min: 500000 } }
+                        - { $zoom: { min: 15 }, area: { min: 100000 } }
+                        - { $zoom: { min: 15 }, area: { min: 50000 } }
+                        - { $zoom: { min: 16 }, area: { min: 20000 } }
+                        - { $zoom: { min: 17 } }
+                default-label-text:
+                    draw:
+                        text-blend-order:
+                            text_source: global.ux_language_text_source
+                            font:
+                                fill: global.text_fill_water
+                                family: global.text_font_family
+                                style: italic
+                                weight: normal
+                                size: 12px
+                lakes-labels:
+                    filter:
+                        $zoom: { min: 4 }
+                    draw:
+                        text-blend-order:
+                            font:
+                                size: [[5,9px],[8,12px]]
+
+            ocean-sea-labels:
+                filter:
+                    kind: [sea, ocean]
+                draw:
+                    text-blend-order:
+                        text_source: global.ux_language_text_source
+                        font:
+                            fill: global.text_fill_water
+                            family: global.text_font_family
+                            style: italic
+                            weight: normal
+                            size: 12px
+                            transform: uppercase
+
+                ocean-spacer:
+                    filter: { kind: ocean }
+                    ocean-spacer-z1-z4:
+                        filter: { $zoom: { min: 1, max: 4 } }
+                        draw:
+                            text-blend-order:
+                                text_source: global.ux_language_text_source_sea
+                                text_wrap: false
+                    ocean-spacer-z4-up:
+                        filter: { $zoom: { min: 4 } }
+                        draw:
+                            text-blend-order:
+                                text_source: global.ux_language_text_source_ocean
+                                text_wrap: false
+                ocean-labels:
+                    draw:
+                        text-blend-order:
+                            font:
+                                size: [[1,8px],[2,10px],[3,13px],[4,16px]]
+
+                sea-early:
+                    filter: { $zoom: [3], kind: sea }
+                    draw: { text-blend-order: { visible: false } }
+                sea-spacer:
+                    filter: { not: { kind: [ocean] }, $zoom: { min: 5 } }
+                    draw:
+                        text-blend-order:
+                            text_source: global.ux_language_text_source_sea
+                            text_wrap: false
+
+                sea-labels:
+                    filter: { not: { kind: [ocean] } }
+                    draw:
+                        text-blend-order:
+                            font:
+                                fill: global.text_fill_water
+                                size: [[4,8px],[6,11px],[8,14px]]
+
+            playa-labels:
+                filter:
+                    all:
+                        - $geometry: point
+                        - kind: playa
+                        - area: true
+                    any:
+                        # show labels for smaller landuse areas at higher zooms
+                        - { $zoom: { min: 7 },  area: { min: 1500000000 } }
+                        - { $zoom: { min: 8 },  area: { min: 200000000 } }
+                        # feature no longer available in switch from NE to OSM
+                        - { $zoom: { min: 9 },  area: { min: 100000000 } }
+                        - { $zoom: { min: 10 }, area: { min: 100000000 } }
+                        - { $zoom: { min: 11 }, area: { min: 10000000 } }
+                        - { $zoom: { min: 12 }, area: { min: 2000000 } }
+                        - { $zoom: { min: 13 }, area: { min: 1000000 } }
+                        - { $zoom: { min: 14 }, area: { min: 500000 } }
+                        - { $zoom: { min: 15 }, area: { min: 100000 } }
+                        - { $zoom: { min: 15 }, area: { min: 50000 } }
+                        - { $zoom: { min: 16 }, area: { min: 20000 } }
+                        - { $zoom: { min: 17 } }
+                draw:
+                    text-blend-order:
+                        text_source: global.ux_language_text_source
+                        font:
+                            fill: grey
+                            family: global.text_font_family
+                            style: italic
+                            weight: normal
+                            size: 12px
+                            stroke: { color: global.text_stroke_water, width: 3 }
+                # debug only
+        #        icons:
+        #            size: [[13, 12px], [15, 18px]]
+        #            interactive: true
+        #            sprite: global.townspot_sprite
+            water-line-labels:
+                filter:
+                    all:
+                        - $geometry: line
+                        - kind: [river,canal,stream,dam,ditch,drain]
+                        - $zoom: { min: 14 }
+                draw:
+                    text-blend-order:
+                        text_source: global.ux_language_text_source
+                        font:
+                            fill: global.text_fill_water
+                            family: global.text_font_family
+                            style: italic
+                            weight: normal
+                            size: 12px
+                water-line-labels:
+                    draw:
+                        text-blend-order:
+                            font:
+                                size: [[14,10px],[17,14px]]
+                not-river-not-stream:
+                    filter: { kind: [canal,dam,ditch,drain], $zoom: { max: 16 } }
+                    draw:
+                        text-blend-order:
+                            visible: false
+                stream:
+                    filter: { kind: [stream], $zoom: { max: 17 } }
+                    draw:
+                        text-blend-order:
+                            visible: false
 
     transit-basemap:
         data: { source: mapzen, layer: transit }
@@ -1498,7 +1656,7 @@ layers:
             lines:
                 #color: black
                 width: 1px
-                order: function() { return feature.sort_rank; }
+                order: global.feature_order
                 # but give them all the same outline
                 outline:
                     order: 352
@@ -1521,7 +1679,7 @@ layers:
                     #cap: butt
                     outline:
                         # except bridges and tunnels, their outlines should also self-sort
-                        order: function() { return feature.sort_rank; }
+                        order: global.feature_order
 
         # default outlines starting at zoom 16
         default-outline-width:
@@ -3083,7 +3241,7 @@ layers:
                     - kind_detail: steps
             draw:
                 dashed_steps:
-                    order: function() { return feature.sort_rank; }
+                    order: global.feature_order
                     #cap: round
                     #join: round
                     color: global.path_steps1_b
@@ -3283,7 +3441,7 @@ layers:
                     color: [[14, global.rail1_e],[16, global.rail1]]
                     width: [[15,0.5px],[16,0.75px],[18,1m]]
                     # let roads sort themselves past zoom 14
-                    order: function() { return feature.sort_rank; }
+                    order: global.feature_order
                     # but give them all the same outline
                     outline:
                         order: 354
@@ -3621,8 +3779,6 @@ layers:
                 text-blend-order:
                     priority: 3
                     visible: global.text_visible_admin
-                    text_source:  |
-                        function() { return feature["name:en"] || feature["name"]; }
                     font:
                         fill: global.text_fill
                         weight: 600
@@ -4742,8 +4898,11 @@ layers:
                 kind: [national_park, battlefield]
             draw:
                 icons:
+                    visible: global.icon_visible_landuse_green
+                    size: global.icon_size_green
                     sprite: park
                     text:
+                        visible: global.text_visible_landuse_green
                         font:
                             fill: global.text_fill_park
                             style: italic
@@ -4760,8 +4919,11 @@ layers:
                 - { kind: protected_area, not: { protect_class: [6, '6'] } }
             draw:
                 icons:
+                    visible: global.icon_visible_landuse_green
+                    size: global.icon_size_green
                     sprite: park
                     text:
+                        visible: global.text_visible_landuse_green
                         font:
                             fill: global.text_fill_park
                             style: italic
@@ -4779,8 +4941,11 @@ layers:
                 - { kind: protected_area, protect_class: [6, '6'] }
             draw:
                 icons:
+                    visible: global.icon_visible_landuse_green
+                    size: global.icon_size_green
                     sprite: forest
                     text:
+                        visible: global.text_visible_landuse_green
                         font:
                             fill: global.text_fill_park
                             style: italic
@@ -4789,7 +4954,10 @@ layers:
                 kind: [beach]
             draw:
                 icons:
+                    visible: global.icon_visible_landuse_green
+                    size: global.icon_size_green
                     text:
+                        visible: global.text_visible_landuse_green
                         font:
                             fill: global.text_fill_beach
         airport:
@@ -4797,9 +4965,12 @@ layers:
                 kind: [airport, aerodrome]
             draw:
                 icons:
+                    visible: global.icon_visible_landuse_green
+                    size: global.icon_size_green
                     priority: 42
                     text:
                         text_source: global.ux_language_text_source_iata
+                        visible: global.text_visible_landuse_green
             early:
                 filter: { $zoom: [9,10,11] }
                 draw: { icons: { text: { text_source: iata } } }
@@ -5169,179 +5340,10 @@ layers:
                                 size: 12px
                                 stroke: { color: white, width: 4 }
 
-
-    # todo: ocean and sea features are hiding in the places layer
-    water-area-labels:
-        data: { source: mapzen, layer: water }
-        visible: global.text_visible_water_labels
-        filter:
-            all:
-                - name: true
-                - $geometry: point
-                - not: { kind: [riverbank, dock, playa] }
-                - area: true
-            any:
-                # show labels for smaller landuse areas at higher zooms
-                - { $zoom: { min: 5 },  area: { min: 10000000000 } }
-                - { $zoom: { min: 6 },  area: { min: 5000000000 } }
-                - { $zoom: { min: 7 },  area: { min: 400000000 } }
-                - { $zoom: { min: 8 },  area: { min: 200000000 } }
-                - { $zoom: { min: 9 },  area: { min: 100000000 } }
-                - { $zoom: { min: 10 }, area: { min: 100000000 } }
-                - { $zoom: { min: 11 }, area: { min: 10000000 } }
-                - { $zoom: { min: 12 }, area: { min: 2000000 } }
-                - { $zoom: { min: 13 }, area: { min: 1000000 } }
-                - { $zoom: { min: 14 }, area: { min: 500000 } }
-                - { $zoom: { min: 15 }, area: { min: 100000 } }
-                - { $zoom: { min: 15 }, area: { min: 50000 } }
-                - { $zoom: { min: 16 }, area: { min: 20000 } }
-                - { $zoom: { min: 17 } }
-        default-label-text:
-            draw:
-                text-blend-order:
-                    text_source: global.ux_language_text_source
-                    font:
-                        fill: global.text_fill_water
-                        family: global.text_font_family
-                        style: italic
-                        weight: normal
-                        size: 12px
-        lakes-labels:
-            filter:
-                $zoom: { min: 4 }
-            draw:
-                text-blend-order:
-                    font:
-                        size: [[5,9px],[8,12px]]
-
-    ocean-sea-labels:
-        data: { source: mapzen, layer: water }
-        visible: global.text_visible_water_labels
-        filter: { name: true, kind: [sea, ocean] }
-        draw:
-            text-blend-order:
-                text_source: global.ux_language_text_source
-                font:
-                    fill: global.text_fill_water
-                    family: global.text_font_family
-                    style: italic
-                    weight: normal
-                    size: 12px
-                    transform: uppercase
-
-        ocean-spacer:
-            filter: { kind: ocean }
-            ocean-spacer-z1-z4:
-                filter: { $zoom: { min: 1, max: 4 } }
-                draw:
-                    text-blend-order:
-                        text_source: global.ux_language_text_source_sea
-                        text_wrap: false
-            ocean-spacer-z4-up:
-                filter: { $zoom: { min: 4 } }
-                draw:
-                    text-blend-order:
-                        text_source: global.ux_language_text_source_ocean
-                        text_wrap: false
-        ocean-labels:
-            draw:
-                text-blend-order:
-                    font:
-                        size: [[1,8px],[2,10px],[3,13px],[4,16px]]
-
-        sea-early:
-            filter: { $zoom: [3], kind: sea }
-            draw: { text-blend-order: { visible: false } }
-        sea-spacer:
-            filter: { not: { kind: [ocean] }, $zoom: { min: 5 } }
-            draw:
-                text-blend-order:
-                    text_source: global.ux_language_text_source_sea
-                    text_wrap: false
-
-        sea-labels:
-            filter: { not: { kind: [ocean] } }
-            draw:
-                text-blend-order:
-                    font:
-                        fill: global.text_fill_water
-                        size: [[4,8px],[6,11px],[8,14px]]
-
-    playa-labels:
-        data: { source: mapzen, layer: water }
-        visible: global.text_visible_water_labels
-        filter:
-            all:
-                - name: true
-                - $geometry: point
-                - kind: playa
-                - area: true
-            any:
-                # show labels for smaller landuse areas at higher zooms
-                - { $zoom: { min: 7 },  area: { min: 1500000000 } }
-                - { $zoom: { min: 8 },  area: { min: 200000000 } }
-                - { $zoom: { min: 9 },  area: { min: 100000000 } }
-                - { $zoom: { min: 10 }, area: { min: 100000000 } }
-                - { $zoom: { min: 11 }, area: { min: 10000000 } }
-                - { $zoom: { min: 12 }, area: { min: 2000000 } }
-                - { $zoom: { min: 13 }, area: { min: 1000000 } }
-                - { $zoom: { min: 14 }, area: { min: 500000 } }
-                - { $zoom: { min: 15 }, area: { min: 100000 } }
-                - { $zoom: { min: 15 }, area: { min: 50000 } }
-                - { $zoom: { min: 16 }, area: { min: 20000 } }
-                - { $zoom: { min: 17 } }
-        draw:
-            text-blend-order:
-                text_source: global.ux_language_text_source
-                font:
-                    fill: grey
-                    family: global.text_font_family
-                    style: italic
-                    weight: normal
-                    size: 12px
-                    stroke: { color: global.text_stroke_water, width: 3 }
-        # debug only
-#        icons:
-#            size: [[13, 12px], [15, 18px]]
-#            interactive: true
-#            sprite: global.townspot_sprite
-    water-line-labels:
-        data: { source: mapzen, layer: water }
-        filter:
-            all:
-                - name: true
-                - $geometry: line
-                - kind: [river,canal,stream,dam,ditch,drain]
-                - $zoom: { min: 14 }
-        draw:
-            text-blend-order:
-                visible: global.text_visible_water_labels
-                text_source: global.ux_language_text_source
-                font:
-                    fill: global.text_fill_water
-                    family: global.text_font_family
-                    style: italic
-                    weight: normal
-                    size: 12px
-        water-line-labels:
-            draw:
-                text-blend-order:
-                    font:
-                        size: [[14,10px],[17,14px]]
-        not-river-not-stream:
-            filter: { kind: [canal,dam,ditch,drain], $zoom: { max: 16 } }
-            draw:
-                text-blend-order:
-                    visible: false
-        stream:
-            filter: { kind: [stream], $zoom: { max: 17 } }
-            draw:
-                text-blend-order:
-                    visible: false
-
     earth-labels:
         data: { source: mapzen, layer: earth }
-        filter: { name: true }
+        filter:
+            name: true
         draw:
             text-blend-order:
                 text_source: global.ux_language_text_source
@@ -5379,10 +5381,10 @@ layers:
                         stroke: { color: global.text_stroke, width: 4 }
 
     landuse:
-        data: { source: mapzen }
+        data: { source: mapzen, layer: landuse }
         draw:
             polygons:
-                order: function() { return feature.sort_rank; }
+                order: global.feature_order
 
         landuse-labels:
             filter:
@@ -5393,7 +5395,7 @@ layers:
             draw:
                 text-blend-order:
                     text_source: global.ux_language_text_source
-                    interactive: true
+                    #interactive: true
                     move_into_tile: true
                     priority: 100
                     visible: global.text_visible_landuse_generic
@@ -5446,7 +5448,6 @@ layers:
                         - protect_class: ['2','3','5']
                 draw:
                     polygons:
-                        interactive: true
                         color: global.green7
                         # todo: what is this?
                         order: 18
@@ -5904,86 +5905,82 @@ layers:
                         color: global.grey11_o
                         width: [[14,0px],[15,1px],[16,0.5m]]
 
-    landuse-not-filtered:
-        data: { source: mapzen, layer: landuse }
-        # runways and taxiways are also in the roads layer as lines
-        # these ones are probably duplicate features, but have AREA (a good thing)
-        filter:
-            kind:
-                - runway
-                - apron
-                - roller_coaster
-                - amusement_ride
-                - summer_toboggan
-                - trail_riding_station
-                - water_slide
-                - carousel
-                - animal
-                - enclosure
-                - petting_zoo
-                - aviary
-        draw:
-            polygons:
-                order: function() { return feature.sort_rank; }
-        runway:
-            filter:
-                kind: runway
-            draw:
-                polygons:
-                    color: global.grey2
-        apron:
-            filter:
-                kind: apron
-                $zoom: { min: 15}
-            draw:
-                polygons:
-                    color: global.grey1
-                    visible: global.grey1_v
-        minor-amusement-park-landuse:
+        landuse-not-filtered:
+            # runways and taxiways are also in the roads layer as lines
+            # these ones are probably duplicate features, but have AREA (a good thing)
             filter:
                 kind:
+                    - runway
+                    - apron
                     - roller_coaster
                     - amusement_ride
                     - summer_toboggan
                     - trail_riding_station
                     - water_slide
                     - carousel
-            draw:
-                polygons:
-                    color: global.grey12
-                    visible: true
-                outline:
-                    style: lines
-                    color: global.grey12_o
-                    width: [[14,0px],[15,1px],[16,0.5m]]
-        minor-zoo-landuse:
-            filter:
-                kind:
                     - animal
                     - enclosure
                     - petting_zoo
                     - aviary
             draw:
                 polygons:
-                    color: global.green11
-                    visible: true
-                outline:
-                    style: lines
-                    color: global.green11_o
-                    width: [[14,0px],[15,1px],[16,0.5m]]
+                    order: global.feature_order
+            runway:
+                filter:
+                    kind: runway
+                draw:
+                    polygons:
+                        color: global.grey2
+            apron:
+                filter:
+                    kind: apron
+                    $zoom: { min: 15}
+                draw:
+                    polygons:
+                        color: global.grey1
+                        visible: global.grey1_v
+            minor-amusement-park-landuse:
+                filter:
+                    kind:
+                        - roller_coaster
+                        - amusement_ride
+                        - summer_toboggan
+                        - trail_riding_station
+                        - water_slide
+                        - carousel
+                draw:
+                    polygons:
+                        color: global.grey12
+                        visible: true
+                    outline:
+                        style: lines
+                        color: global.grey12_o
+                        width: [[14,0px],[15,1px],[16,0.5m]]
+            minor-zoo-landuse:
+                filter:
+                    kind:
+                        - animal
+                        - enclosure
+                        - petting_zoo
+                        - aviary
+                draw:
+                    polygons:
+                        color: global.green11
+                        visible: true
+                    outline:
+                        style: lines
+                        color: global.green11_o
+                        width: [[14,0px],[15,1px],[16,0.5m]]
 
-    landuse_urban_area-early:
-        data: { source: mapzen, layer: landuse }
-        filter:
-            # This is from Natural Earth and only shows up from zoom(0,9)
-            kind: ['urban area']
-        visible: global.earth2_ev
-        draw:
-            polygons:
-                order: function() { return feature.sort_rank; }
-                color: [[0, global.earth2_e],[6, global.earth2_e2],[8, global.earth2_e3]]
-
-
+        landuse_urban_area-early:
+            filter:
+                # This is from Natural Earth and only shows up from zoom(0,9)
+                kind: urban_area
+            visible: global.earth2_ev
+            draw:
+                polygons:
+                    order: global.feature_order
+                    color: [[0, global.earth2_e],[6, global.earth2_e2],[8, global.earth2_e3]]
 
 #    transit-bus-roads:
 #        data: { source: mapzen, layer: roads }
@@ -5999,12 +5996,3 @@ layers:
 #                # but give them all the same outline
 #                outline:
 #                    order: 487
-
-
-    debug:
-        data: { source: mapzen }
-        draw:
-            flat_lines:
-                width: 2px
-                order: 1000
-                color: '#ff0000'
