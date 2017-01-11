@@ -1651,7 +1651,6 @@ layers:
 
     roads:
         data: { source: mapzen, layer: roads }
-        filter: { not: { kind: rail } }
         draw:
             lines:
                 #color: black
