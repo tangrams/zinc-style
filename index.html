@@ -224,7 +224,7 @@
         var layer = Tangram.leafletLayer({
             // more: 'vector-tiles-9Dggrv4'
             // default (some): 'vector-tiles-id4gZ6k'
-            // no: 'vector-tiles-yk8LOEY  '
+            // no: 'vector-tiles-yk8LOEY'
             scene: { import: 'zinc-style.yaml', global: { sdk_mapzen_api_key: 'vector-tiles-id4gZ6k' } },
             attribution: '<a href="https://mapzen.com/tangram" target="_blank">Tangram</a>, &copy; OSM contributors'
         });
@@ -470,7 +470,7 @@
                 scene.config.global.text_visible_exits = _default;
 
                 scene.config.global.text_visible_building = _more;
-                scene.config.global.text_visible_addresses = _more;
+                scene.config.global.text_visible_address = _more;
 
                 scene.config.global.label_visible_poi_landuse = _more;
                 scene.config.global.text_visible_poi_landuse = _more;
@@ -519,20 +519,20 @@
             });
             gui.transit_button.name('transit');
 
-//            // Building extrusion selector
-//            var building_3d = {
-//                '(default)': true,
-//                'Yes': true,
-//                'No': false
-//            };
-//            // use transit ux, else default to false
-//            gui.building_3d = query.building_3d || true;
-//            gui.building_button = gui.add(gui, 'building_3d', building_3d).onChange(function(value) {
-//                scene.config.global.sdk_building_extrude = (value === 'true' || value === true); // dat.gui passes a string
-//                scene.updateConfig();
-//            });
-//            gui.building_button.name( '3D buildings' );
-//
+            // Building extrusion selector
+            var building_3d = {
+                '(default)': false,
+                'Yes': true,
+                'No': false
+            };
+            // use transit ux, else default to false
+            gui.building_3d = query.building_3d || false;
+            gui.building_button = gui.add(gui, 'building_3d', building_3d).onChange(function(value) {
+                scene.config.global.sdk_building_extrude = (value === 'true' || value === true); // dat.gui passes a string
+                scene.updateConfig();
+            });
+            gui.building_button.name( '3D buildings' );
+
 //             // Animation selector
 //             var animated = {
 //                 '(default)': true,

@@ -306,7 +306,7 @@ global:
     major_road2a:               [0.8, 0.8, 0.8]
     major_road2b:               [0.8, 0.8, 0.8]
     major_road3:                [0.8, 0.8, 0.8]
-    major_road4:                [0.8, 0.8, 0.8]
+    major_road4:                [0.60, 0.60, 0.60]  # ???????
     major_road5:                [0.8, 0.8, 0.8]
     major_casing1:              [0.45, 0.45, 0.45]  # same as highway_casing1
     major_casing2:              [0.5, 0.5, 0.5]     # zoomed out
@@ -315,7 +315,6 @@ global:
     major_route1:               [0.8, 0.8, 0.8]
     major_route2:               [0.8, 0.8, 0.8]     # zoomed out
     minor_route:                [0.8, 0.8, 0.8]     # same as major_route
-    major_road4:                [0.60, 0.60, 0.60]
     minor_road1:                [0.60, 0.60, 0.60]  # natural earth
     minor_road2:                [0.40, 0.40, 0.40]  # natural earth, same as major_road2
     minor_road3:                '#ccc'
@@ -434,7 +433,7 @@ global:
     building1:          [.7, .7, .7]        # building
     building2:          [.1, .1, .1]        # building stroke
     building_o:         25                  # building stroke order
-    building_e:         false               # building extrude
+    sdk_building_extrude:  false            # building extrude
 
 textures:
     pois:
@@ -1696,7 +1695,7 @@ layers:
                     cap: round
                     join: round
                     color: [[7, global.highway1_e],[8, global.major_road3]]
-                    width: [[5, 1px], [7, 1.4px], [9, 2px], [14, 3px], [16, 4px], [17, 10m]]
+                    width: [[9, 2px], [14, 3px], [16, 4px], [17, 10m]]
             major_road:
                 filter: { kind: major_road }
                 draw:
@@ -1721,8 +1720,8 @@ layers:
                 lines:
                     #cap: [[0,butt],[15,round]]
                     #join: round
-                    color: global.highway1
-                    width: [[8, 2px], [9, 2.5px], [14, 4.0px], [15, 6.0px], [16, 6.5px], [17, 20m]]
+                    color: [[7,global.highway1_e], [8, global.highway1]]
+                    width: [[5, 1px], [7, 1.4px], [8, 2px], [9, 2.5px], [14, 4.0px], [15, 6.0px], [16, 6.5px], [17, 20m]]
                     outline:
                         color: global.highway_casing1
                         width: [[9, 0.5px], [12, 1px], [16, 2px], [18, 6px]]
@@ -3486,13 +3485,13 @@ layers:
                 #order: function() { if( $zoom < 17) { return 5; } else { return 9; } }
                 order: 438
                 color: global.building1
-                extrude: global.building_e
+                extrude: global.sdk_building_extrude
             outline:
                 style: lines
                 order: 439
                 color: global.building2
                 width: [[14,0.1px],[15,0.5px],[17,0.5px],[18,0.75px],[19,0.4m]]
-                extrude: global.building_e
+                extrude: global.sdk_building_extrude
         in_park:
             #todo: does forest belong here?
             filter: { landuse_kind: [park,forest,nature_reserve,conservation,golf_course,garden] }
@@ -4618,6 +4617,14 @@ layers:
             draw:
                 icons:
                     visible: false
+            # eg park polygons in SF that have area but no name, sigh
+            no-name-no-area:
+                filter:
+                    kind: true
+                    name: false
+                draw:
+                    icons:
+                        visible: false
             sports-pitch:
                 filter:
                     $zoom: { min: 17 }
@@ -5983,10 +5990,12 @@ layers:
 
 #    transit-bus-roads:
 #        data: { source: mapzen, layer: roads }
-#        filter: { is_bus_route: true }
+#        filter:
+#            all:
+#                - is_bus_route: true
+#                - function() { return global.sdk_transit_overlay; }
 #        draw:
 #            lines:
-#                visible: global.sdk_transit_overlay
 #                interactive: false
 #                color: [[13,[0,0,1,0.5]],[15,blue]]
 #                width: [[11,0.5px],[12,0.8px],[16,1.25px],[18,1m]]
