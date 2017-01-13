@@ -267,7 +267,7 @@ global:
     text_fill_road_e:   '#555'             # WHITE
     text_fill_exits:    [0.2, 0.2, 0.2]    # motorway junctions, highway_casing1
     text_fill_building: [0.3, 0.3, 0.3]    # WHITE
-    text_fill_address:  '#aaa'             # HUH
+    text_fill_address:  '#666'             # HUH
     text_fill_water:    '#000'             # blue
     text_fill_park:     [0.2, 0.2, 0.2]    # green
     text_fill_beach:    [0.2, 0.2, 0.2]    # green
@@ -4618,7 +4618,7 @@ layers:
                 icons:
                     visible: false
             # eg park polygons in SF that have area but no name, sigh
-            no-name-no-area:
+            no-name-with-area-any-kind-default:
                 filter:
                     kind: true
                     name: false
@@ -4921,7 +4921,7 @@ layers:
             #             size: [[14,24px],[16,32px]]
         parks:
             filter:
-                - kind: [park, conservation, nature_reserve, grass]
+                - kind: [park, conservation, grass]
                 - { kind: protected_area, not: { protect_class: [6, '6'] } }
             draw:
                 icons:
