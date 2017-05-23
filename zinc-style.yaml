@@ -822,7 +822,6 @@ styles:
     icons:
         base: points
         texture: pois
-        interactive: global.sdk_interactive
         blend_order: 1
     text-blend-order:
         base: text
@@ -843,25 +842,21 @@ styles:
     ux-location-gem-overlay:
         base: points
         texture: pois
-        interactive: global.sdk_interactive
         blend: overlay
         blend_order: 2
     ux-icons-overlay:
         base: points
         texture: pois
-        interactive: global.sdk_interactive
         blend: overlay
         blend_order: 3
     sdk-point-overlay:
         base: points
         texture: pois
-        interactive: global.sdk_interactive
         blend: overlay
         blend_order: 3
     sdk-shield-overlay:
         base: points
         texture: pois
-        interactive: global.sdk_interactive
         blend: overlay
         blend_order: 3
     sdk-line-overlay:
@@ -1121,6 +1116,7 @@ layers:
         data: { source: mz_default_line }
         draw:
             sdk-line-overlay:
+                interactive: global.sdk_interactive
                 color: black
                 order: 503
                 width: 3px
@@ -1128,6 +1124,7 @@ layers:
         data: { source: mz_default_polygon }
         draw:
             sdk-polygon-overlay:
+                interactive: global.sdk_interactive
                 color: [0.,0.,0.,0.4]  #'#06b1e2'
                 order: 501
             sdk-line-overlay:
