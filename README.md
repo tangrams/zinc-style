@@ -1,3 +1,8 @@
+# DEPRECATED
+
+Use https://github.com/tangrams/refill-style/ instead, loading `themes/color-zinc.zip` instead.
+
+
 # Tangram Zinc Style
 
 **Zinc** is a light gray style optimized for data visualization overlays. Give [OpenStreetMap](http://www.openstreetmap.org/) data a professional basemap skin using the [Tangram](http://github.com/tangrams/tangram) graphics library and Mapzen's versatile [Vector Tiles](https://mapzen.com/projects/vector-tiles/). 
